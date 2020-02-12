@@ -46,16 +46,18 @@ end
 
 def uses_available_letters?(input, letters_in_hand)
   input_array = Array.new(input.chars)
-
+  current_hand = Array.new(letters_in_hand)
   input_array.map do |letter|
     puts "The letter is #{letter}"
-    if letters_in_hand.index(letter) != nil
+    if current_hand.index(letter) != nil
       puts "Found the letter!"
-      puts "Here is the index: #{letters_in_hand.index(letter)}"
+      puts "Here is the index: #{current_hand.index(letter)}"
+      current_hand.delete_at(current_hand.index(letter))
     else
-      puts "Letter not found"
+      return false
     end
   end
+  return true
 end
 
 my_letters = draw_letters
