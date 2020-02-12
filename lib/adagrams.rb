@@ -1,4 +1,5 @@
-letter_distribution = {
+
+$LETTERS = {
   "A" => 9,
   "B" => 2,
   "C" => 2,
@@ -27,66 +28,39 @@ letter_distribution = {
   "Z" => 1
 }
 
+# Wave 1
 # method that returns shuffled hand of 10 tiles according to letter distribution hash
-# def draw_letters(letter_distribution)
-#   pool = []
-#   letter_distribution.map do |letter, tiles|
-#     tiles.times do 
-#       pool << letter
-#     end
-#   end
-#   pool = pool.shuffle.drop(88)
-#   return pool
+def draw_letters
+  pool = []
+  $LETTERS.map do |letter, tiles|
+    tiles.times do 
+      pool << letter
+    end
+  end
+  pool = pool.shuffle.drop(88)
+  return pool
+end
 
-  
-# end
+# Wave 2
+# method that returns true if every letter in the input word is available in correct quantities
 
+def uses_available_letters?(input, letters_in_hand)
+  input_array = Array.new(input.chars)
 
-# Testing to see if sorting method will work for second wave
-pool = %w[B A D C]
-pool = pool.sort
+  input_array.map do |letter|
+    puts "The letter is #{letter}"
+    if letters_in_hand.index(letter) != nil
+      puts "Found the letter!"
+      puts "Here is the index: #{letters_in_hand.index(letter)}"
+    else
+      puts "Letter not found"
+    end
+  end
+end
 
-puts "Input a word"
-player_word = gets.chomp.upcase
-player_array = Array.new(player_word.chars).sort
-# player_array = player_array.sort
-
-puts "Are these the same?"
-puts player_array
-puts pool
-
-
-
-
-
-# puts "Here is the pool: #{draw_letters(letter_distribution)}"
-
-# def uses_available_letters?
-
-
-# end
-
-
-
-# Two parameters:
-# input, the first parameter, describes some input word, and is a string
-# letters_in_hand, the second parameter, describes an array of drawn letters in a hand. You can expect this to be an array of ten strings, with each string representing a letter
-# Returns either true or false
-# Returns true if every letter in the input word is available (in the right quantities) in the letters_in_hand
-# Returns false if not; if there is a letter in input that is not present in the letters_in_hand or has too much of compared to the letters_in_hand
-
-
-
-
-
-
-
-
-
-
-
-
-
+my_letters = draw_letters
+puts "Here are my letters: #{my_letters}"
+puts uses_available_letters?("A", my_letters)
 
 
 
