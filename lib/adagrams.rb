@@ -1,68 +1,68 @@
 
-# $LETTERS = {
-#   "A" => 9,
-#   "B" => 2,
-#   "C" => 2,
-#   "D" => 4,
-#   "E" => 12,	
-#   "F" => 2,
-#   "G" => 3,
-#   "H" => 2,
-#   "I" => 9,
-#   "J" => 1,
-#   "K" => 1,
-#   "L" => 4,
-#   "M" => 2,
-#   "N" => 6,
-#   "O" => 8,
-#   "P" => 2,
-#   "Q" => 1,
-#   "R" => 6,
-#   "S" => 4,
-#   "T" => 6,
-#   "U" => 4,
-#   "V" => 2,
-#   "W" => 2,
-#   "X" => 1,
-#   "Y" => 2,
-#   "Z" => 1
-# }
+$LETTERS = {
+  "A" => 9,
+  "B" => 2,
+  "C" => 2,
+  "D" => 4,
+  "E" => 12,	
+  "F" => 2,
+  "G" => 3,
+  "H" => 2,
+  "I" => 9,
+  "J" => 1,
+  "K" => 1,
+  "L" => 4,
+  "M" => 2,
+  "N" => 6,
+  "O" => 8,
+  "P" => 2,
+  "Q" => 1,
+  "R" => 6,
+  "S" => 4,
+  "T" => 6,
+  "U" => 4,
+  "V" => 2,
+  "W" => 2,
+  "X" => 1,
+  "Y" => 2,
+  "Z" => 1
+}
 
-# # Wave 1
-# # method that returns shuffled hand of 10 tiles according to letter distribution hash
-# def draw_letters
-#   pool = []
-#   $LETTERS.map do |letter, tiles|
-#     tiles.times do 
-#       pool << letter
-#     end
-#   end
-#   pool = pool.shuffle.drop(88)
-#   return pool
-# end
+# Wave 1
+# method that returns shuffled hand of 10 tiles according to letter distribution hash
+def draw_letters
+  pool = []
+  $LETTERS.map do |letter, tiles|
+    tiles.times do 
+      pool << letter
+    end
+  end
+  pool = pool.shuffle.drop(88)
+  return pool
+end
 
-# # Wave 2
-# # method that returns true if every letter in the input word is available in correct quantities
-# def uses_available_letters?(input, letters_in_hand)
-#   input_array = Array.new(input.chars)
-#   current_hand = Array.new(letters_in_hand)
-#   input_array.map do |letter|
-#     puts "The letter is #{letter}"
-#     if current_hand.index(letter) != nil
-#       puts "Found the letter!"
-#       puts "Here is the index: #{current_hand.index(letter)}"
-#       current_hand.delete_at(current_hand.index(letter))
-#       puts "Here is the array now: #{current_hand}"
-#     else
-#       return false
-#     end
-#   end
-#   return true
-# end
+# Wave 2
+# method that returns true if every letter in the input word is available in correct quantities
+def uses_available_letters?(input, letters_in_hand)
+  input_array = Array.new(input.chars)
+  current_hand = Array.new(letters_in_hand)
+  input_array.map do |letter|
+    puts "The letter is #{letter}"
+    if current_hand.index(letter) != nil
+      puts "Found the letter!"
+      puts "Here is the index: #{current_hand.index(letter)}"
+      current_hand.delete_at(current_hand.index(letter))
+      puts "Here is the array now: #{current_hand}"
+    else
+      return false
+    end
+  end
+  return true
+end
 
-# my_letters = draw_letters
-# puts "Here are my letters: #{my_letters}"
-# puts uses_available_letters?("EAIIIIIAAARR", my_letters)
+my_letters = draw_letters
+puts "Here are my letters: #{my_letters}"
+puts uses_available_letters?("EAIIIIIAAARR", my_letters)
 
 # Wave 3
 # Method that calculates word score according to Adagrams rules
@@ -109,8 +109,6 @@ def score_word(word)
   return total_points
 end
 
-
-
 # Wave 4
 # We want a way to find the highest scoring word.
 # This method looks at the array of words and calculates which of these words has the highest score, applies any tie-breaking logic, and returns the winning word in a special data structure.
@@ -124,13 +122,19 @@ end
 # ...unless one word has 10 letters. If the top score is tied between multiple words and one is 10 letters long, choose the one with 10 letters over the one with fewer tiles
 # If the there are multiple words that are the same score and the same length, pick the first one in the supplied list
 
-words = %w[shonda rebecca cat dog justin]
+# So, in a nut shell:   
+# first look at scores
+# if two scores are ==, then look at length
+# if 10 letters long, choose this one as winner
+# if same score and same length, pick first ordered as winner
+
+words = %w[cat dog]
 
 def highest_score_from(words)
   all_words = []
   max_score = 0
-  max_hash = {}
 
+  # Builds word info hashes and adds into all_words
   words.each do |word|
     word_data = {}
     word_data[:word] = word
@@ -138,139 +142,47 @@ def highest_score_from(words)
     all_words << word_data
   end
 
+
+# Eliminates non-ties for highest score
+  tie_score = []
+
   all_words.each do |hash|
-    current_word = hash[:word]
     current_score = hash[:score]
     if current_score > max_score
       max_score = current_score
-      max_hash = hash
+      tie_score = [hash]
+    elsif current_score == max_score
+      tie_score << hash
     end
   end
-  return max_hash
 
-end 
+  # Eliminates non-ties for shortest length
+  # picking 11 to initialize smallest so that we're guaranteed to see smallest be replaced at least once
+  smallest = 11
+  shortest_words = []
+
+  # if only one element in tie_score, that's the winner
+  if tie_score.length == 1
+    return tie_score[0]
+  end
+
+  tie_score.each do |tie|
+    # if 10 chars long, that's the winner
+    if tie[:word].length == 10
+      return tie
+    # if smaller word is found, update smallest and create a new shortest_words array to collect any possible ties for shortest length
+    elsif tie[:word].length < smallest
+      smallest = tie[:word].length
+      shortest_words = [tie]
+      # if more than one word ties for smallest, put it into existing shortest_words array
+    elsif tie[:word].length == smallest
+      shortest_words << tie
+    end
+  end
+  
+  # if winner wasn't already found, the winner is simply the first item of shortest_words
+  return shortest_words[0]
+
+end
 
 puts highest_score_from(words)
-
-
-    
-
-    # scores.each do |score|
-    #   scores << {score: score}
-    # end
-
-  #   highest_word = scores.max
-  #   our_hash = Hash[words.zip(scores)]
-  #  our_hash[:score]
-
-
-# winner = {
-#   word: "Shonda",
-#   score: 10
-# }
-
-# highest_word = scores.max
-
-
-
-
-
-
-
-
-
-# NOT WORKING CODE:
-# puts word_array
-# puts "B: #{letter_values[:B]}"
-
-# letter_values.map do |letter, val|
-#   char_value = 0
-
-  # word_array.map do |char|
-  #   sum = 0
-  #   puts "The first sum is: #{sum}"
-  #   letter_values.map do |letter, value|
-  #     letter = letter.to_s
-  #     puts "Letter: #{letter} ; value: #{value}"
-  #     if letter == char
-  #       puts "The char and letter are the same!"
-  #       puts "Curr val is: #{value}"
-  #       sum = sum + value
-  #     else
-  #       puts "Not the same"
-  #     end
-  #   end
-  #   return sum
-  # end
-
-
-# try switching loop order
-# sum = 0
-#   letter_values.map do |letter, value|
-#     letter = letter.to_s
-#     puts "The first sum is: #{sum}"
-#     word_array.map do |char|
-#       puts "Letter: #{letter} ; value: #{value}"
-#       if letter == char
-#         puts "The char and letter are the same!"
-#         puts "Curr val is: #{value}"
-#         sum += value
-#       else
-#         puts "Not the same"
-#       end
-#       puts "Sum is: #{sum}"
-#     end
-#     return sum
-#   end
-
-# distro_of_letters = {
-#   "A": 9,	
-#   "B": 2,	
-#   "C": 2,	
-#   "D": 4,	
-#   "E": 12,	
-#   "F": 2,
-#   "G": 3,	
-#   "H": 2,	
-#   "I": 9,	
-#   "J": 1,	
-#   "K": 1,	
-#   "L": 4,	
-#   "M": 2,	
-#   "N": 6,
-#   "O": 8,
-#   "P": 2,
-#   "Q": 1,
-#   "R": 6,
-#   "S": 4,
-#   "T": 6,
-#   "U": 4,
-#   "V": 2,
-#   "W": 2,
-#   "X": 1,
-#   "Y": 2,
-#   "Z": 1
-# }
-
-# def draw_letters (distro_of_letters)
-# # creates a new array filled with each alphabet letter based on distrbution of letters
-#   letter_pool = []
-#   distro_of_letters.each do |letters,tiles|
-#       tiles.times do 
-#         letter_pool << letters
-#       end
-#   end
-# # loops through the shuffled letter pool named "deck"
-
-# puts "Here is your hand: "
-#   9.times do
-#     deck = letter_pool.shuffle 
-#   #used to create a random index value to select index of the letter position in "deck"
-#     selector = rand(0...97)
-#     print deck[selector]
-    
-#   end
-# end
-
-# draw_letters(distro_of_letters)
-
