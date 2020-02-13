@@ -124,28 +124,33 @@ end
 # ...unless one word has 10 letters. If the top score is tied between multiple words and one is 10 letters long, choose the one with 10 letters over the one with fewer tiles
 # If the there are multiple words that are the same score and the same length, pick the first one in the supplied list
 
-words = %w[shonda becca cat dog]
+words = %w[shonda rebecca cat dog justin]
 
 def highest_score_from(words)
-  scores = []
   all_words = []
-  highest_word = ""
-  our_hash = {}
+  max_score = 0
+  max_hash = {}
 
   words.each do |word|
-    #scores << score_word(word)
-    #scores.map do |score|
-    our_hash[:word] = word
-    our_hash[:score] = score_word(word)
-    all_words << our_hash
-    #our_hash = Hash[words.zip(scores)]
-    
+    word_data = {}
+    word_data[:word] = word
+    word_data[:score] = score_word(word)
+    all_words << word_data
   end
 
-  puts "Our_hash: #{all_words}"
-  #puts "Winning_words: #{winning_words}"
+  all_words.each do |hash|
+    current_word = hash[:word]
+    current_score = hash[:score]
+    if current_score > max_score
+      max_score = current_score
+      max_hash = hash
+    end
+  end
+  return max_hash
+
 end 
-highest_score_from(words)
+
+puts highest_score_from(words)
 
 
     
