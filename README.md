@@ -102,7 +102,7 @@ When you first open the project and run the tests with `rake`, you should have 0
 
 What do these errors mean? These errors should help guide you with the next step to completing the project.
 
-Do not move onto a new wave of requirements until the minimum requirements of the previous wave are complete and your tests are green across the board.
+Do not move onto a new wave of requirements until the minimum requirements of the previous wave are complete and your tests are green across the board for all methods you've implemented. (Wave 1 tests are in the "draw_letters method" describe block, Wave 2 tests are in the "uses_available_letters? method" describle block, etc.)
 
 Here is what it looks like when all 17 tests are passing:
 ![all 16 tests are passing message](assets/passing-tests-screenshot.png)
