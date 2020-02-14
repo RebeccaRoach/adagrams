@@ -64,12 +64,9 @@ DICTIONARY = "../assets/dictionary-english.csv"
 
 # Wave 1
 def draw_letters
-  pool = []
-  LETTERS.map do |letter, num_of_tiles|
-    num_of_tiles.times do 
-      pool << letter
-    end
-  end
+  pool = LETTERS.map do |letter, num_of_tiles|
+    [letter] * num_of_tiles
+  end.flatten
   pool = pool.shuffle.drop(88)
   return pool
 end
